@@ -34,19 +34,44 @@ class Navbar extends Component {
                   About <span className="sr-only">(current)</span>
                 </Link>
               </li> */}
-              <li className="nav-item">
-                { this.props.authenticated
-                  ? ( 
-                      <Link className="nav-link" to="/profile">
-                        Profile <span className="sr-only">(current)</span>
-                      </Link> 
-                    ) : (
-                      <Link className="nav-link" to="/login">
-                        <button type="button" className="btn btn-outline-primary">Login</button>
-                      </Link>
-                    )
-                }
-              </li>
+              {this.props.authenticated ? (
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    User
+                  </a>
+                  <div
+                    className="dropdown-menu"
+                    aria-labelledby="navbarDropdown"
+                  >
+                    <Link className="dropdown-item" to="/profile">
+                      Profile
+                    </Link>
+                    <Link className="dropdown-item" to="/settings">
+                      Settings
+                    </Link>
+                    <div className="dropdown-divider" />
+                    <Link className="dropdown-item" to="/logout">
+                      Logout
+                    </Link>
+                  </div>
+                </li>
+              ) : (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">
+                    <button type="button" className="btn btn-outline-primary">
+                      Login
+                    </button>
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
         </div>

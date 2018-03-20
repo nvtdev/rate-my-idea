@@ -13,12 +13,10 @@ class Home extends Component {
   render() {
     return (
       <div>
-        <div className="container home-content">
-          <Link type="button" className="btn btn-primary" to="/post">
-            Post
-          </Link>
-          <List/>
-        </div>
+        <Link type="button" className="btn btn-primary" to="/post">
+          Post
+        </Link>
+        <List />
       </div>
     );
   }
