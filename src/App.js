@@ -68,11 +68,12 @@ class App extends Component {
     base.removeBinding(this.ideasRef);
   }
 
-  addIdea(title, description) {
+  addIdea(username, title, description) {
     const ideas = { ...this.state.ideas };
     const id = Date.now();
     ideas[id] = {
       id: id,
+      username: username,
       title: title,
       description: description
     };
@@ -115,7 +116,6 @@ class App extends Component {
             <Navbar authenticated={this.state.authenticated} />
             <div className="container">
               <Route exact path="/" component={Home} ideas={this.state.ideas} />
-              <Route exact path="/about" component={About} />
               <Route
                 exact
                 path="/login"
@@ -125,7 +125,13 @@ class App extends Component {
                   );
                 }}
               />
-              <Route exact path="/post" component={Post} />
+              <Route
+                exact
+                path="/post"
+                render={props => {
+                  return <Post addIdea={this.addIdea} {...props} />;
+                }}
+              />
               <AuthenticatedRoute
                 exact
                 path="/profile"
