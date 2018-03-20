@@ -1,25 +1,33 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Spinner } from '@blueprintjs/core';
 
 import Home from "./components/home/Home";
 import About from "./components/About";
 import Login from "./components/Login";
 import Post from "./components/Post";
+import Navbar from "./components/Navbar";
 // import Content from "./components/Content";
-// import Footer from "./components/Footer";
+import Footer from "./components/Footer";
 
-import { base } from "./base";
+import { app, base } from "./base";
 
 class App extends Component {
   constructor() {
     super();
     this.addIdea = this.addIdea.bind(this);
     this.state = {
-      ideas: {}
+      ideas: {},
+      authenticated: false,
+      loading: true
     };
   }
 
   componentWillMount() {
+    this.removeAuthListener = app.auth().onAuthStateChanged((user) => {
+      if (user) this.setState({ authenticated: true, loading: false });
+      else this.setState({ authenticated: false, loading: false });
+    });
     this.ideasRef = base.syncState("ideas", {
       context: this,
       state: "ideas"
@@ -27,6 +35,7 @@ class App extends Component {
   }
 
   componentWillUnmount() {
+    this.removeAuthListener();
     base.removeBinding(this.ideasRef);
   }
 
@@ -38,17 +47,29 @@ class App extends Component {
       title: title,
       description: description
     };
+    this.setState({ideas});
   }
 
   render() {
+    if (this.state.loading)
+      return (
+        <div style={{ textAlign: "center", position: "absolute", top: "25%", left: "50%" }}>
+          <h3>Loading</h3>
+          <Spinner />
+          </div>
+      )
+
     return (
       <div>
         <Router>
           <div>
-            <Route exact path="/" component={Home} />
+            <Navbar authenticated={this.state.authenticated} />
+            <Route exact path="/" component={Home} 
+              ideas={this.state.ideas} />
             <Route exact path="/about" component={About} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/post" component={Post} />
+            <Footer />
           </div>
         </Router>
       </div>

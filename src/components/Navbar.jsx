@@ -8,7 +8,7 @@ class Navbar extends Component {
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            RateMyIdea
+            Logo
           </Link>
           <button
             className="navbar-toggler"
@@ -24,7 +24,7 @@ class Navbar extends Component {
 
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <Link className="nav-link" to="/">
                   Home <span className="sr-only">(current)</span>
                 </Link>
@@ -33,11 +33,19 @@ class Navbar extends Component {
                 <Link className="nav-link" to="/about">
                   About <span className="sr-only">(current)</span>
                 </Link>
-              </li>
+              </li> */}
               <li className="nav-item">
-                <Link className="nav-link" to="/login">
-                  Login <span className="sr-only">(current)</span>
-                </Link>
+                { this.props.authenticated
+                  ? ( 
+                      <Link className="nav-link" to="/profile">
+                        Profile <span className="sr-only">(current)</span>
+                      </Link> 
+                    ) : (
+                      <Link className="nav-link" to="/login">
+                        <button type="button" className="btn btn-outline-primary">Login</button>
+                      </Link>
+                    )
+                }
               </li>
             </ul>
           </div>
