@@ -34,6 +34,13 @@ class Navbar extends Component {
                   About <span className="sr-only">(current)</span>
                 </Link>
               </li> */}
+              <li className="nav-item">
+                <Link className="nav-link" to="/post">
+                  <button className="btn btn-outline-success my-2 my-sm-0">
+                    Post
+                  </button>
+                </Link>
+              </li>
               {this.props.authenticated ? (
                 <li className="nav-item dropdown">
                   <a

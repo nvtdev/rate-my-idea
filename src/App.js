@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import { Spinner } from "@blueprintjs/core";
 
-import Home from "./components/home/Home";
+import Home from "./components/Home";
 import About from "./components/About";
 import Login from "./components/Login";
 import Logout from "./components/Logout";
@@ -38,7 +38,8 @@ class App extends Component {
       authenticated: false,
       currentUser: null,
       ideas: null,
-      loading: true
+      loading: true,
+      redirectHome: false
     };
   }
 
@@ -77,7 +78,7 @@ class App extends Component {
       title: title,
       description: description
     };
-    this.setState({ ideas });
+    this.setState({ ideas, redirectHome: true });
   }
 
   setCurrentUser(user) {
@@ -109,20 +110,28 @@ class App extends Component {
         </div>
       );
 
+    if (this.state.redirectHome) {
+      this.setState({ redirectHome: false });
+      return (
+        <Router>
+          <Redirect to="/" />
+        </Router>
+      );
+    }
+
     return (
       <div>
         <Router>
           <div>
             <Navbar authenticated={this.state.authenticated} />
             <div className="container">
-              <Route 
-                exact 
-                path="/" 
+              <Route
+                exact
+                path="/"
                 render={props => {
-                  return (
-                    <Home ideas={this.state.ideas} {...props} />
-                  )
-                }} />
+                  return <Home ideas={this.state.ideas} {...props} />;
+                }}
+              />
               <Route
                 exact
                 path="/login"
