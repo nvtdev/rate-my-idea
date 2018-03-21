@@ -37,7 +37,7 @@ class App extends Component {
     this.state = {
       authenticated: false,
       currentUser: null,
-      ideas: {},
+      ideas: null,
       loading: true
     };
   }
@@ -94,7 +94,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.loading)
+    if (this.state.loading || !this.state.ideas)
       return (
         <div
           style={{
@@ -115,7 +115,14 @@ class App extends Component {
           <div>
             <Navbar authenticated={this.state.authenticated} />
             <div className="container">
-              <Route exact path="/" component={Home} ideas={this.state.ideas} />
+              <Route 
+                exact 
+                path="/" 
+                render={props => {
+                  return (
+                    <Home ideas={this.state.ideas} {...props} />
+                  )
+                }} />
               <Route
                 exact
                 path="/login"
