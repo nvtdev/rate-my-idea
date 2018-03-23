@@ -2,3 +2,24 @@
   margin: auto;
   display: block;
 }
+
+.ReactTags__tags {
+  margin-top: 10px;
+}
+
+.ReactTags__tag {
+  margin: 5px;
+  background: lightgrey;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.ReactTags__tagInputField {
+  margin-top: 20px;
+  border-radius: 5px;
+  border: none;
+}
+
+.ReactTags__tagInputField:focus {
+  outline: none;
+}

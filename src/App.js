@@ -5,12 +5,15 @@ import { Spinner } from "@blueprintjs/core";
 import Home from "./components/Home";
 import About from "./components/About";
 import Login from "./components/Login";
+import Register from "./components/Register";
 import Logout from "./components/Logout";
 import Post from "./components/Post";
 import Navbar from "./components/Navbar";
 import Profile from "./components/Profile";
+import Idea from "./components/Idea";
 // import Content from "./components/Content";
 import Footer from "./components/Footer";
+import { Toaster, Intent } from "@blueprintjs/core";
 
 import { app, base } from "./base";
 
@@ -29,6 +32,36 @@ function AuthenticatedRoute({ component: Component, authenticated, ...rest }) {
   );
 }
 
+function NonAuthRoute({ component: Component, ...rest }) {
+  return (
+    <Route {...rest} render={props => <Component {...props} {...rest} />} />
+  );
+}
+
+function ShowRoute({ component: Component, items, param, ...rest }) {
+  return (
+    <Route
+      {...rest}
+      render={({ match, ...props }) => {
+        if (rest.requireAuth === true && !rest.authenticated) {
+          return (
+            <Redirect
+              to={{ pathname: "/login", state: { from: props.location } }}
+            />
+          );
+        }
+
+        const item = items[match.params[param]];
+        if (item) {
+          return <Component item={item} {...props} match={match} {...rest} />;
+        } else {
+          return <h1>Not Found</h1>;
+        }
+      }}
+    />
+  );
+}
+
 class App extends Component {
   constructor() {
     super();
@@ -39,19 +72,28 @@ class App extends Component {
       currentUser: null,
       ideas: null,
       loading: true,
-      redirectHome: false
+      redirectHome: false,
+      registerUsername: null // user for adding username upon signup
     };
   }
 
   componentWillMount() {
     this.removeAuthListener = app.auth().onAuthStateChanged(user => {
-      if (user)
+      console.log(user);
+      if (user) {
         this.setState({
           authenticated: true,
           loading: false,
           currentUser: user
         });
-      else
+        user
+          .updateProfile({
+            displayName: this.state.registerUsername
+          })
+          .then(function() {
+            console.log(user);
+          });
+      } else
         this.setState({
           authenticated: false,
           loading: false,
@@ -69,16 +111,62 @@ class App extends Component {
     base.removeBinding(this.ideasRef);
   }
 
-  addIdea(username, title, description) {
+  addIdea(username, title, description, tags) {
     const ideas = { ...this.state.ideas };
     const id = Date.now();
     ideas[id] = {
       id: id,
       username: username,
       title: title,
-      description: description
+      description: description,
+      tags: tags
     };
     this.setState({ ideas, redirectHome: true });
+  }
+
+  addFirebaseUser(component, toaster, username, email, password) {
+    app
+      .auth()
+      .fetchProvidersForEmail(email)
+      .then(provider => {
+        if (provider.length === 0) {
+          if (component == "Register") {
+            // create new user
+            return app
+              .auth()
+              .createUserWithEmailAndPassword(email, password)
+              .then(user => {
+                if (user && user.email) {
+                  this.setCurrentUser(user);
+                  this.setState({
+                    registerUsername: username,
+                    redirectHome: true
+                  });
+                }
+              });
+          }
+        } else {
+          // sign in user
+          if (component == "Login")
+            return app.auth().signInWithEmailAndPassword(email, password);
+          else {
+            toaster.show({
+              intent: Intent.WARNING,
+              message: "This e-mail is already in use."
+            });
+          }
+        }
+      })
+      .then(user => {
+        if (user && user.email) {
+          console.log(this);
+          this.setCurrentUser(user);
+          this.setState({ redirectHome: true });
+        }
+      })
+      .catch(error => {
+        toaster.show({ intent: Intent.DANGER, message: error.message });
+      });
   }
 
   setCurrentUser(user) {
@@ -132,21 +220,41 @@ class App extends Component {
                   return <Home ideas={this.state.ideas} {...props} />;
                 }}
               />
-              <Route
+              <NonAuthRoute
                 exact
                 path="/login"
-                render={props => {
-                  return (
-                    <Login setCurrentUser={this.setCurrentUser} {...props} />
-                  );
-                }}
+                component={Login}
+                addFirebaseUser={this.addFirebaseUser.bind(this)}
+              />
+              <NonAuthRoute
+                exact
+                path="/register"
+                component={Register}
+                addFirebaseUser={this.addFirebaseUser.bind(this)}
+              />
+              <AuthenticatedRoute
+                exact
+                path="/post"
+                authenticated={this.state.authenticated}
+                user={this.state.user}
+                component={Post}
+                // render={props => {
+                //   return <Post addIdea={this.addIdea} {...props} />;
+                // }}
+                addIdea={this.addIdea}
               />
               <Route
                 exact
-                path="/post"
+                path="/ideas/:ideaId"
                 render={props => {
-                  return <Post addIdea={this.addIdea} {...props} />;
+                  return <Idea ideas={this.state.ideas} {...props} />;
                 }}
+              />
+              <ShowRoute
+                path="/ideas/:ideaId"
+                component={Idea}
+                param="ideaId"
+                items={this.state.ideas}
               />
               <AuthenticatedRoute
                 exact

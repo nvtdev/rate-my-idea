@@ -1,0 +1,32 @@
+.idea {
+  text-decoration: none;
+  padding: 15px;
+}
+
+.idea-score {
+  margin-right: 10px;
+}
+
+.idea-title {
+  display: inline-block;
+}
+
+.idea-title a,
+.idea-title a:hover {
+  text-decoration: none;
+  color: black;
+}
+
+.idea-tags {
+  display: inline;
+  margin-left: 10px;
+}
+
+.idea-tags span {
+  font-size: 100%;
+  margin-left: 5px;
+}
+
+.idea-description {
+  padding-left: 25px;
+}

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
-import Idea from "./Idea.jsx";
+import IdeaItem from "./IdeaItem.jsx";
 
 class Home extends Component {
   render() {
@@ -16,14 +16,7 @@ class Home extends Component {
     return (
       <div>
         {ideasArray.map(idea => {
-          return (
-            // <div key={idea.id}>
-            //   <h5>
-            //     <Link to={`/idea/${idea.id}`}>{idea.title}</Link>
-            //   </h5>
-            // </div>
-            <Idea idea={idea} />
-          );
+          return <IdeaItem idea={idea} />;
         })}
       </div>
     );
