@@ -73,26 +73,19 @@ class App extends Component {
       ideas: null,
       loading: true,
       redirectHome: false,
-      registerUsername: null // user for adding username upon signup
+      userInfoLoaded: false
     };
   }
 
   componentWillMount() {
     this.removeAuthListener = app.auth().onAuthStateChanged(user => {
-      console.log(user);
+      this.setState({ userInfoLoaded: true });
       if (user) {
         this.setState({
           authenticated: true,
           loading: false,
           currentUser: user
         });
-        user
-          .updateProfile({
-            displayName: this.state.registerUsername
-          })
-          .then(function() {
-            console.log(user);
-          });
       } else
         this.setState({
           authenticated: false,
@@ -137,11 +130,16 @@ class App extends Component {
               .createUserWithEmailAndPassword(email, password)
               .then(user => {
                 if (user && user.email) {
-                  this.setCurrentUser(user);
-                  this.setState({
-                    registerUsername: username,
-                    redirectHome: true
-                  });
+                  user
+                    .updateProfile({
+                      displayName: username
+                    })
+                    .then(user => {
+                      this.setCurrentUser(user);
+                      this.setState({
+                        redirectHome: true
+                      });
+                    });
                 }
               });
           }
@@ -183,7 +181,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.loading || !this.state.ideas)
+    if (this.state.loading || !this.state.ideas || !this.state.userInfoLoaded)
       return (
         <div
           style={{
@@ -236,25 +234,19 @@ class App extends Component {
                 exact
                 path="/post"
                 authenticated={this.state.authenticated}
-                user={this.state.user}
+                user={this.state.currentUser}
                 component={Post}
                 // render={props => {
                 //   return <Post addIdea={this.addIdea} {...props} />;
                 // }}
                 addIdea={this.addIdea}
               />
-              <Route
-                exact
-                path="/ideas/:ideaId"
-                render={props => {
-                  return <Idea ideas={this.state.ideas} {...props} />;
-                }}
-              />
               <ShowRoute
                 path="/ideas/:ideaId"
                 component={Idea}
                 param="ideaId"
                 items={this.state.ideas}
+                user={this.state.currentUser}
               />
               <AuthenticatedRoute
                 exact
