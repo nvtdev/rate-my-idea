@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import "./Idea.css";
 import { base } from "../base";
+import IdeaItem from "./IdeaItem.jsx";
 
 class Idea extends Component {
   constructor(props) {
@@ -52,19 +53,7 @@ class Idea extends Component {
 
       return (
         <div>
-          <div className="idea">
-            <span className="idea-score">{idea.score}</span>
-            <h4 className="idea-title">
-              <Link to={`/ideas/${idea.id}`}>{idea.title}</Link>
-            </h4>{" "}
-            <span>by {author}</span>
-            <div className="idea-tags">
-              {tags.map(tag => {
-                return <span className="badge badge-dark">{tag.text}</span>;
-              })}
-            </div>
-            <div className="idea-description">{idea.description}</div>
-          </div>
+          <IdeaItem idea={idea} />
           <div className="comments">
             {commentsArray.map(comment => {
               return (

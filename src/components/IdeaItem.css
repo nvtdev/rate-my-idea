@@ -30,3 +30,14 @@
 .idea-description {
   padding-left: 25px;
 }
+
+.fa-angle-down {
+  position: relative;
+  top: 20px;
+  right: 15px;
+}
+
+.score-arrow {
+  font-size: 25px;
+  cursor: pointer;
+}
