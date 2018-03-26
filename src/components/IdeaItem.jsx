@@ -29,7 +29,8 @@ class IdeaItem extends Component {
   }
 
   render() {
-    const { idea } = this.state.idea;
+    // const { idea } = this.state.idea;
+    const idea = this.props.idea;
 
     if (!idea) return "";
 

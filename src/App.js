@@ -80,6 +80,7 @@ class App extends Component {
   componentWillMount() {
     this.removeAuthListener = app.auth().onAuthStateChanged(user => {
       this.setState({ userInfoLoaded: true });
+      console.log(user);
       if (user) {
         this.setState({
           authenticated: true,
@@ -92,10 +93,25 @@ class App extends Component {
           loading: false,
           currentUser: null
         });
-    });
-    this.ideasRef = base.syncState("ideas", {
-      context: this,
-      state: "ideas"
+
+        let query = {};
+        if (!user)
+          query = {
+            orderByChild: "visibility",
+            equalTo: "a"
+          };
+        else
+          if (user.providerData[0].providerId === 'password')
+            query = {
+              orderByChild: "visibility",
+              endAt: "b"
+            };
+
+        this.ideasRef = base.syncState("ideas", {
+          context: this,
+          state: "ideas",
+          queries: query
+        });
     });
   }
 
@@ -104,14 +120,16 @@ class App extends Component {
     base.removeBinding(this.ideasRef);
   }
 
-  addIdea(username, title, description, tags) {
+  addIdea(title, description, visibility, tags) {
     const ideas = { ...this.state.ideas };
     const id = Date.now();
     ideas[id] = {
       id: id,
-      username: username,
+      userId: this.state.currentUser.uid,
+      username: this.state.currentUser.displayName,
       title: title,
       description: description,
+      visibility: visibility,
       tags: tags
     };
     this.setState({ ideas, redirectHome: true });

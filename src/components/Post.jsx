@@ -16,9 +16,9 @@ class Post extends Component {
     event.preventDefault();
 
     this.props.addIdea(
-      this.usernameInput.value,
       this.titleInput.value,
       this.textInput.value,
+      this.visibilityInput.value,
       this.state.tags
     );
   }
@@ -84,6 +84,14 @@ class Post extends Component {
                   this.textInput = input;
                 }}
               />
+            </div>
+            <div className="form-group">
+              <label htmlFor="visibilityInput">Description visible to:</label>
+                <select id="visibilityInput" className="custom-select" ref={input => { this.visibilityInput = input; }}>
+                  <option defaultValue value="a">All users</option>
+                  <option value="b">All registered users</option>
+                  <option value="c">Just Facebook users</option>
+                </select>
             </div>
             <div className="form-group">
               <label htmlFor="textInput">Tags (up to 5)</label>
