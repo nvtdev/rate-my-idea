@@ -28,8 +28,8 @@ class IdeaItem extends Component {
   }
 
   render() {
-    // const { idea } = this.state.idea;
-    const idea = this.props.idea;
+    // const { idea } = this.state;
+    const { idea } = this.props;
 
     if (!idea) return "";
 
@@ -38,15 +38,6 @@ class IdeaItem extends Component {
 
     return (
       <div className="idea">
-        <i
-          onClick={e => this.vote("up")}
-          className="fas score-arrow fa-angle-up"
-        />
-        <i
-          onClick={e => this.vote("down")}
-          className="fas score-arrow fa-angle-down"
-        />
-        <span className="idea-score">{idea.score}</span>
         <h4 className="idea-title">
           <Link to={`/ideas/${idea.id}`} idea={idea}>
             {idea.title}

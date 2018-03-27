@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import "./Idea.css";
 import { base } from "../base";
 import IdeaItem from "./IdeaItem.jsx";
+import StarRatingComponent from 'react-star-rating-component';
 
 class Idea extends Component {
   constructor(props) {
     super(props);
     this.addComment = this.addComment.bind(this);
     this.state = {
-      comments: []
+      comments: [],
+      rating: 1
     };
   }
 
@@ -40,8 +42,13 @@ class Idea extends Component {
     });
   }
 
+  onStarClick(nextValue, prevValue, name) {
+    this.setState({rating: nextValue});
+  }
+
   render() {
-    const idea = this.props.item;
+    const idea = this.props.item,
+    { rating } = this.state;
 
     if (idea) {
       const author = idea.username ? idea.username : "Anonymous",
@@ -53,7 +60,34 @@ class Idea extends Component {
 
       return (
         <div>
-          <IdeaItem idea={idea} />
+          <div className="row">
+            <div className="col-sm-10">
+              <IdeaItem idea={idea} />
+            </div>
+            <div className="col-sm-2">
+              <h4>Originality</h4>
+              <StarRatingComponent
+                name="rate1"
+                starCount={5}
+                value={3.5}
+                onStarClick={this.onStarClick.bind(this)}
+              />
+              <h4>Feasability</h4>
+              <StarRatingComponent
+                name="rate1"
+                starCount={5}
+                value={rating}
+                onStarClick={this.onStarClick.bind(this)}
+              />
+              <h4>Creativity</h4>
+              <StarRatingComponent
+                name="rate1"
+                starCount={5}
+                value={rating}
+                onStarClick={this.onStarClick.bind(this)}
+              />
+            </div>
+          </div>
           <div className="comments">
             {commentsArray.map(comment => {
               return (
