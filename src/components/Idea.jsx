@@ -4,6 +4,7 @@ import "./Idea.css";
 import { base } from "../base";
 import IdeaItem from "./IdeaItem.jsx";
 import StarRatingComponent from 'react-star-rating-component';
+import Rating from 'react-rating';
 
 class Idea extends Component {
   constructor(props) {
@@ -11,7 +12,10 @@ class Idea extends Component {
     this.addComment = this.addComment.bind(this);
     this.state = {
       comments: [],
-      rating: 1
+      ratings: {},
+      ratingOriginality: 1,
+      ratingFeasability: 1,
+      ratingMarketability: 1
     };
   }
 
@@ -40,6 +44,14 @@ class Idea extends Component {
         equalTo: this.props.item.id
       }
     });
+    this.ratingRef = base.syncState("ratings", {
+      context: this,
+      state: "ratings",
+      queries: {
+        orderByChild: "userId",
+        equalTo: this.props.user.uid
+      }
+    });
   }
 
   onStarClick(nextValue, prevValue, name) {
@@ -48,7 +60,7 @@ class Idea extends Component {
 
   render() {
     const idea = this.props.item,
-    { rating } = this.state;
+    { ratingOriginality, ratingFeasability, ratingMarketability } = this.state;
 
     if (idea) {
       const author = idea.username ? idea.username : "Anonymous",
@@ -60,34 +72,37 @@ class Idea extends Component {
 
       return (
         <div>
-          <div className="row">
-            <div className="col-sm-10">
-              <IdeaItem idea={idea} />
+          <form>
+            <div className="row">
+              <div className="col-sm-10">
+                <IdeaItem idea={idea} />
+              </div>
+              <div className="col-sm-2">
+                <h4>Originality</h4>
+                <StarRatingComponent
+                  name="rate1"
+                  starCount={5}
+                  value={ratingOriginality}
+                  onStarClick={this.onStarClick.bind(this)}
+                />
+                <h4>Feasability</h4>
+                <StarRatingComponent
+                  name="rate1"
+                  starCount={5}
+                  value={ratingFeasability}
+                  onStarClick={this.onStarClick.bind(this)}
+                />
+              <h4>Marketability</h4>
+                <StarRatingComponent
+                  name="rate1"
+                  starCount={5}
+                  value={ratingMarketability}
+                  onStarClick={this.onStarClick.bind(this)}
+                />
+                <button type="button" className="btn btn-outline-info">Submit rating</button>
+              </div>
             </div>
-            <div className="col-sm-2">
-              <h4>Originality</h4>
-              <StarRatingComponent
-                name="rate1"
-                starCount={5}
-                value={3.5}
-                onStarClick={this.onStarClick.bind(this)}
-              />
-              <h4>Feasability</h4>
-              <StarRatingComponent
-                name="rate1"
-                starCount={5}
-                value={rating}
-                onStarClick={this.onStarClick.bind(this)}
-              />
-              <h4>Creativity</h4>
-              <StarRatingComponent
-                name="rate1"
-                starCount={5}
-                value={rating}
-                onStarClick={this.onStarClick.bind(this)}
-              />
-            </div>
-          </div>
+          </form>
           <div className="comments">
             {commentsArray.map(comment => {
               return (

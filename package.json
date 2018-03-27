@@ -5,15 +5,18 @@
   "dependencies": {
     "@blueprintjs/core": "^1.35.7",
     "firebase": "^4.11.0",
+    "font-awesome": "^4.7.0",
     "re-base": "^3.2.2",
     "react": "^16.2.0",
     "react-addons-css-transition-group": "^15.6.2",
     "react-bootstrap": "^0.32.1",
     "react-dom": "^16.2.0",
+    "react-rating": "^1.1.1",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
     "react-star-rating": "^1.4.2",
     "react-star-rating-component": "^1.4.1",
+    "react-stars": "^2.2.5",
     "react-tag-input": "^4.9.1"
   },
   "scripts": {
