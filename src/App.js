@@ -71,6 +71,8 @@ class App extends Component {
       authenticated: false,
       currentUser: null,
       ideas: null,
+      currentUserIdeas: null,
+      currentUserIdeasLoaded: false,
       loading: true,
       redirectHome: false,
       userInfoLoaded: false
@@ -95,17 +97,31 @@ class App extends Component {
         });
 
         let query = {};
-        if (!user)
+        if (!user) {
           query = {
             orderByChild: "visibility",
             equalTo: "a"
           };
-        else
+          this.setState({ currentUserIdeasLoaded: true });
+        } else {
           if (user.providerData[0].providerId === 'password')
             query = {
               orderByChild: "visibility",
               endAt: "b"
             };
+
+            this.currentUserIdeasRef = base.syncState("ideas", {
+              context: this,
+              state: "currentUserIdeas",
+              queries: {
+                orderByChild: "userId",
+                equalTo: user.uid
+              },
+              then() {
+                this.setState({ currentUserIdeasLoaded: true });
+              }
+            });
+        }
 
         this.ideasRef = base.syncState("ideas", {
           context: this,
@@ -175,7 +191,6 @@ class App extends Component {
       })
       .then(user => {
         if (user && user.email) {
-          console.log(this);
           this.setCurrentUser(user);
           this.setState({ redirectHome: true });
         }
@@ -199,7 +214,7 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.loading || !this.state.ideas || !this.state.userInfoLoaded)
+    if (this.state.loading || !this.state.ideas || !this.state.userInfoLoaded || !this.state.currentUserIdeasLoaded)
       return (
         <div
           style={{
@@ -223,6 +238,13 @@ class App extends Component {
       );
     }
 
+    // merge all visible ideas with ideas submitted by user
+    const mergedIdeas = { ...this.state.ideas };
+    for (var key in this.state.currentUserIdeas) {
+      if (!(key in mergedIdeas))
+        mergedIdeas[key] = this.state.currentUserIdeas[key];
+    }
+
     return (
       <div>
         <Router>
@@ -233,13 +255,14 @@ class App extends Component {
                 exact
                 path="/"
                 render={props => {
-                  return <Home ideas={this.state.ideas} {...props} />;
+                  return <Home ideas={mergedIdeas} {...props} />;
                 }}
               />
               <NonAuthRoute
                 exact
                 path="/login"
                 component={Login}
+                setCurrentUser={this.setCurrentUser.bind(this)}
                 addFirebaseUser={this.addFirebaseUser.bind(this)}
               />
               <NonAuthRoute
@@ -254,16 +277,13 @@ class App extends Component {
                 authenticated={this.state.authenticated}
                 user={this.state.currentUser}
                 component={Post}
-                // render={props => {
-                //   return <Post addIdea={this.addIdea} {...props} />;
-                // }}
                 addIdea={this.addIdea}
               />
               <ShowRoute
                 path="/ideas/:ideaId"
                 component={Idea}
                 param="ideaId"
-                items={this.state.ideas}
+                items={mergedIdeas}
                 user={this.state.currentUser}
               />
               <AuthenticatedRoute

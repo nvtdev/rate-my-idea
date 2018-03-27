@@ -86,7 +86,7 @@ class Post extends Component {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="visibilityInput">Description visible to:</label>
+              <label htmlFor="visibilityInput">Visible for:</label>
                 <select id="visibilityInput" className="custom-select" ref={input => { this.visibilityInput = input; }}>
                   <option defaultValue value="a">All users</option>
                   <option value="b">All registered users</option>

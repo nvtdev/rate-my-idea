@@ -11,7 +11,6 @@ class Home extends Component {
     for (var key in ideas) {
       ideasArray.push(ideas[key]);
     }
-    console.log(ideasArray);
 
     return (
       <div>

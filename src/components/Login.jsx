@@ -16,45 +16,11 @@ class Login extends Component {
 
   authWithEmailPassword(event) {
     event.preventDefault();
-    // console.table([{
-    //   email: this.emailInput.value,
-    //   password: this.passwordInput.value
-    // }]);
-
+    
     const email = this.emailInput.value,
       password = this.passwordInput.value;
 
     this.props.addFirebaseUser("Login", this.toaster, null, email, password);
-
-    // app
-    //   .auth()
-    //   .fetchProvidersForEmail(email)
-    //   .then(provider => {
-    //     if (provider.length === 0) {
-    //       // create new user
-    //       return app.auth().createUserWithEmailAndPassword(email, password);
-    //     } else if (provider.indexOf("password") === -1) {
-    //       // they used facebook
-    //       this.toaster.show({
-    //         intent: Intent.WARNING,
-    //         message: "You already use this email for login with Facebook."
-    //       });
-    //       this.loginForm.reset();
-    //     } else {
-    //       // sign in user
-    //       return app.auth().signInWithEmailAndPassword(email, password);
-    //     }
-    //   })
-    //   .then(user => {
-    //     if (user && user.email) {
-    //       this.loginForm.reset();
-    //       this.props.setCurrentUser(user);
-    //       this.setState({ redirect: true });
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.toaster.show({ intent: Intent.DANGER, message: error.message });
-    //   });
   }
 
   authWithFacebook(event) {

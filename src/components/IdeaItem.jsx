@@ -23,8 +23,7 @@ class IdeaItem extends Component {
       queries: {
         orderByChild: "id",
         equalTo: this.props.idea.id
-      },
-      then: console.log(this.state.idea)
+      }
     });
   }
 
