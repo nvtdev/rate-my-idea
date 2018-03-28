@@ -10,11 +10,12 @@ class Idea extends Component {
   constructor(props) {
     super(props);
     this.addComment = this.addComment.bind(this);
+    this.postRating = this.postRating.bind(this);
     this.state = {
       comments: [],
-      ratings: {},
+      ratings: null,
       ratingOriginality: 1,
-      ratingFeasability: 1,
+      ratingFeasibility: 1,
       ratingMarketability: 1
     };
   }
@@ -35,6 +36,22 @@ class Idea extends Component {
     this.setState({ comments });
   }
 
+  postRating(event) {
+    event.preventDefault();
+    let ratings = { ...this.state.ratings },
+        uniqueId = parseInt(Date.now() + "" + Math.floor(Math.random() * 1000));
+
+    ratings[uniqueId] = {
+      userId: this.props.user.uid,
+      ideaId: this.props.item.id,
+      originality: this.state.ratingOriginality,
+      feasibility: this.state.ratingFeasibility,
+      marketability: this.state.ratingMarketability
+    };
+
+    this.setState({ ratings });
+  }
+
   componentWillMount() {
     this.commentsRef = base.syncState("comments", {
       context: this,
@@ -48,19 +65,29 @@ class Idea extends Component {
       context: this,
       state: "ratings",
       queries: {
-        orderByChild: "userId",
-        equalTo: this.props.user.uid
+        orderByChild: "ideaId",
+        equalTo: this.props.item.id
       }
     });
   }
 
   onStarClick(nextValue, prevValue, name) {
-    this.setState({rating: nextValue});
+    this.setState({ [name]: nextValue });
   }
 
   render() {
     const idea = this.props.item,
-    { ratingOriginality, ratingFeasability, ratingMarketability } = this.state;
+    { ratings, ratingOriginality, ratingFeasibility, ratingMarketability } = this.state;
+
+    // check if user submitted rating - begin
+    let userSubmittedRating = false;
+    if (ratings) {
+      for (var key in ratings) {
+        if (ratings[key].userId === this.props.user.uid)
+          userSubmittedRating = true;
+        }
+    }
+    // check if user submitted rating - end
 
     if (idea) {
       const author = idea.username ? idea.username : "Anonymous",
@@ -72,37 +99,50 @@ class Idea extends Component {
 
       return (
         <div>
-          <form>
             <div className="row">
               <div className="col-sm-10">
                 <IdeaItem idea={idea} />
               </div>
               <div className="col-sm-2">
-                <h4>Originality</h4>
-                <StarRatingComponent
-                  name="rate1"
-                  starCount={5}
-                  value={ratingOriginality}
-                  onStarClick={this.onStarClick.bind(this)}
-                />
-                <h4>Feasability</h4>
-                <StarRatingComponent
-                  name="rate1"
-                  starCount={5}
-                  value={ratingFeasability}
-                  onStarClick={this.onStarClick.bind(this)}
-                />
-              <h4>Marketability</h4>
-                <StarRatingComponent
-                  name="rate1"
-                  starCount={5}
-                  value={ratingMarketability}
-                  onStarClick={this.onStarClick.bind(this)}
-                />
-                <button type="button" className="btn btn-outline-info">Submit rating</button>
+              {ratings ? (
+                <form onSubmit={event => {
+                  this.postRating(event);
+                }}>
+                  <h4>Originality</h4>
+                  <StarRatingComponent
+                    name="ratingOriginality"
+                    starCount={5}
+                    value={ratingOriginality}
+                    onStarClick={this.onStarClick.bind(this)}
+                    editing={!userSubmittedRating}
+                  />
+                  <h4>Feasibility</h4>
+                  <StarRatingComponent
+                    name="ratingFeasibility"
+                    starCount={5}
+                    value={ratingFeasibility}
+                    onStarClick={this.onStarClick.bind(this)}
+                    editing={!userSubmittedRating}
+                  />
+                <h4>Marketability</h4>
+                  <StarRatingComponent
+                    name="ratingMarketability"
+                    starCount={5}
+                    value={ratingMarketability}
+                    onStarClick={this.onStarClick.bind(this)}
+                    editing={!userSubmittedRating}
+                  />
+                  { !userSubmittedRating ? (
+                    <button type="submit" className="btn btn-outline-info">Submit rating</button>
+                  ) : (
+                    <div className="alert alert-success" role="alert">
+                      <i className="fas fa-check"></i> You've submitted your rating!
+                    </div>
+                  ) }
+                </form>
+              ) : ''}
               </div>
             </div>
-          </form>
           <div className="comments">
             {commentsArray.map(comment => {
               return (
