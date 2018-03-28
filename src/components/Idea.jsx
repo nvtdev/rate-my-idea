@@ -14,9 +14,9 @@ class Idea extends Component {
     this.state = {
       comments: [],
       ratings: null,
-      ratingOriginality: 1,
-      ratingFeasibility: 1,
-      ratingMarketability: 1
+      originality: 1,
+      feasibility: 1,
+      marketability: 1
     };
   }
 
@@ -44,9 +44,9 @@ class Idea extends Component {
     ratings[uniqueId] = {
       userId: this.props.user.uid,
       ideaId: this.props.item.id,
-      originality: this.state.ratingOriginality,
-      feasibility: this.state.ratingFeasibility,
-      marketability: this.state.ratingMarketability
+      originality: this.state.originality,
+      feasibility: this.state.feasibility,
+      marketability: this.state.marketability
     };
 
     this.setState({ ratings });
@@ -77,17 +77,29 @@ class Idea extends Component {
 
   render() {
     const idea = this.props.item,
-    { ratings, ratingOriginality, ratingFeasibility, ratingMarketability } = this.state;
+    { ratings, originality, feasibility, marketability } = this.state;
 
-    // check if user submitted rating - begin
-    let userSubmittedRating = false;
+    let userSubmittedRating = false,
+        averages = {},
+        ratingsCounter = 0;
+
     if (ratings) {
       for (var key in ratings) {
+        // check if user submitted rating - begin
         if (ratings[key].userId === this.props.user.uid)
           userSubmittedRating = true;
+
+        ratingsCounter++;
+
+        // calculate average rating
+        for (var subkey in ratings[key]) {
+          if (subkey != 'ideaId' && subkey != 'userId')
+            averages[subkey] = ((averages[subkey] ? averages[subkey] : 0) + ratings[key][subkey]) / ratingsCounter;
         }
+      }
     }
-    // check if user submitted rating - end
+
+
 
     if (idea) {
       const author = idea.username ? idea.username : "Anonymous",
@@ -110,25 +122,25 @@ class Idea extends Component {
                 }}>
                   <h4>Originality</h4>
                   <StarRatingComponent
-                    name="ratingOriginality"
+                    name="originality"
                     starCount={5}
-                    value={ratingOriginality}
+                    value={ averages['originality'] ? averages['originality'] : originality }
                     onStarClick={this.onStarClick.bind(this)}
                     editing={!userSubmittedRating}
                   />
                   <h4>Feasibility</h4>
                   <StarRatingComponent
-                    name="ratingFeasibility"
+                    name="feasibility"
                     starCount={5}
-                    value={ratingFeasibility}
+                    value={ averages['feasibility'] ? averages['feasibility'] : feasibility }
                     onStarClick={this.onStarClick.bind(this)}
                     editing={!userSubmittedRating}
                   />
                 <h4>Marketability</h4>
                   <StarRatingComponent
-                    name="ratingMarketability"
+                    name="marketability"
                     starCount={5}
-                    value={ratingMarketability}
+                    value={ averages['marketability'] ? averages['marketability'] : marketability }
                     onStarClick={this.onStarClick.bind(this)}
                     editing={!userSubmittedRating}
                   />
@@ -136,7 +148,7 @@ class Idea extends Component {
                     <button type="submit" className="btn btn-outline-info">Submit rating</button>
                   ) : (
                     <div className="alert alert-success" role="alert">
-                      <i className="fas fa-check"></i> You've submitted your rating!
+                      <i className="fas fa-star"></i> Average from {ratingsCounter} ratings
                     </div>
                   ) }
                 </form>
