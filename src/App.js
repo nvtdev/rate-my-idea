@@ -249,7 +249,9 @@ class App extends Component {
       <div>
         <Router>
           <div>
-            <Navbar authenticated={this.state.authenticated} />
+            <Navbar
+              user={this.state.currentUser}
+              authenticated={this.state.authenticated} />
             <div className="container">
               <Route
                 exact
@@ -290,6 +292,8 @@ class App extends Component {
                 exact
                 path="/profile"
                 component={Profile}
+                user={this.state.currentUser}
+                ideas={mergedIdeas}
                 authenticated={this.state.authenticated}
               />
               <Route exact path="/logout" component={Logout} />

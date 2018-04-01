@@ -42,7 +42,7 @@ class Navbar extends Component {
                 </Link>
               </li>
               {this.props.authenticated ? (
-                <li className="nav-item dropdown">
+                <li className="nav-item dropdown user-dropdown">
                   <a
                     className="nav-link dropdown-toggle"
                     href="#"
@@ -52,7 +52,7 @@ class Navbar extends Component {
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    User
+                    {this.props.user.displayName}
                   </a>
                   <div
                     className="dropdown-menu"
