@@ -29,7 +29,7 @@ class Home extends Component {
         </div>
         <div className="col-sm-2">
           {tags.map(tag => {
-            return <span onClick={ (e) => this.removeFilter(tag) } className="badge badge-dark tag-badge">{tag}</span>;
+            return <span data-toggle="tooltip" data-placement="bottom" title="Click to remove filter" onClick={ (e) => this.removeFilter(tag) } className="badge badge-dark tag-badge">{tag}</span>;
           })}
         </div>
       </div>

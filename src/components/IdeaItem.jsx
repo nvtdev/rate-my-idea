@@ -46,7 +46,7 @@ class IdeaItem extends Component {
         <span>by {author}</span>
         <div className="idea-tags">
           {tags.map(tag => {
-            return <span onClick={ (e) => this.props.addFilter(tag.text) } className="badge badge-dark tag-badge">{tag.text}</span>;
+            return <span data-toggle="tooltip" data-placement="bottom" title="Click to filter by tag" onClick={ (e) => this.props.addFilter(tag.text) } className="badge badge-dark tag-badge">{tag.text}</span>;
           })}
         </div>
         <div className="idea-description">{idea.description}</div>
