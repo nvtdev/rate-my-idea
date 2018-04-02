@@ -200,6 +200,14 @@ class App extends Component {
       });
   }
 
+  objectToArray(obj) {
+    let arr = [];
+    for (var key in obj) {
+      arr.push(obj[key]);
+    }
+    return arr;
+  }
+
   setCurrentUser(user) {
     if (user)
       this.setState({
@@ -257,7 +265,7 @@ class App extends Component {
                 exact
                 path="/"
                 render={props => {
-                  return <Home ideas={mergedIdeas} {...props} />;
+                  return <Home objectToArray={this.objectToArray} ideas={mergedIdeas} {...props} />;
                 }}
               />
               <NonAuthRoute
