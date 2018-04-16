@@ -116,6 +116,48 @@ class Idea extends Component {
             <div className="row">
               <div className="col-sm-10">
                 <IdeaItem idea={idea} />
+                <div className="comments">
+                  {commentsArray.map(comment => {
+                    return (
+                      <div className="comment">
+                        <span className="comment-author">{comment.author}</span>
+                        <span className="comment-text">{comment.text}</span>
+                      </div>
+                    );
+                  })}
+                  {this.props.user ? (
+                    <form
+                      onSubmit={event => {
+                        this.addComment(event);
+                      }}
+                    >
+                      <div className="form-group">
+                        <label htmlFor="textInput">Add a comment</label>
+                        <textarea
+                          className="form-control"
+                          id="textInput"
+                          rows="2"
+                          ref={input => {
+                            this.textInput = input;
+                          }}
+                        />
+                      </div>
+                      <button type="submit" className="btn btn-primary btn-post-idea">
+                        Submit
+                      </button>
+                    </form>
+                  ) : (
+                    <div className="form-group">
+                      <textarea
+                        className="form-control"
+                        id="textInput"
+                        disabled
+                        placeholder="Login to add comment"
+                        rows="2"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="col-sm-2">
               {ratings ? (
@@ -157,40 +199,6 @@ class Idea extends Component {
               ) : ''}
               </div>
             </div>
-          <div className="comments">
-            {commentsArray.map(comment => {
-              return (
-                <div className="comment">
-                  <span className="comment-author">{comment.author}</span>
-                  <span className="comment-text">{comment.text}</span>
-                </div>
-              );
-            })}
-            {this.props.user ? (
-              <form
-                onSubmit={event => {
-                  this.addComment(event);
-                }}
-              >
-                <div className="form-group">
-                  <label htmlFor="textInput">Add a comment</label>
-                  <textarea
-                    className="form-control"
-                    id="textInput"
-                    rows="2"
-                    ref={input => {
-                      this.textInput = input;
-                    }}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary btn-post-idea">
-                  Submit
-                </button>
-              </form>
-            ) : (
-              ""
-            )}
-          </div>
         </div>
       );
     } else return <div />;
