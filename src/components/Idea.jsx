@@ -86,8 +86,10 @@ class Idea extends Component {
     if (ratings) {
       for (var key in ratings) {
         // check if user submitted rating - begin
+        if (this.props.user) {
         if (ratings[key].userId === this.props.user.uid)
           userSubmittedRating = true;
+        }
 
         ratingsCounter++;
 
@@ -144,7 +146,7 @@ class Idea extends Component {
                     onStarClick={this.onStarClick.bind(this)}
                     editing={!userSubmittedRating}
                   />
-                  { !userSubmittedRating ? (
+                  { !userSubmittedRating && this.props.user ? (
                     <button type="submit" className="btn btn-outline-info">Submit rating</button>
                   ) : (
                     <div className="alert alert-success" role="alert">
