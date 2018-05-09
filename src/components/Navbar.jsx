@@ -8,7 +8,7 @@ class Navbar extends Component {
       <nav className="navbar navbar-expand-lg navbar-light bg-light">
         <div className="container">
           <Link className="navbar-brand" to="/">
-          <i class="fas fa-star"></i>
+          <i className="fas fa-star"></i>
             RateMyIdea
           </Link>
           <button

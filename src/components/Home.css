@@ -1,3 +1,11 @@
+.home-container {
+  padding-top: 20px;
+}
+
+.home-sidebar {
+  border-left: 1px solid lightgrey;
+}
+
 .tag-badge {
   margin-left: 5px;
   font-size: 14px;
@@ -9,4 +17,14 @@
 
 .footer {
   bottom: unset !important;
+}
+
+.trending-tag {
+  margin-left: 5px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.filter-tags {
+  margin-top: 20px;
 }

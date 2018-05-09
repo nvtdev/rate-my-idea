@@ -18,19 +18,54 @@ class Home extends Component {
           { tags } = this.state,
           ideasIds = Object.keys(ideas);
 
-    let ideasArray = this.props.objectToArray(ideas);
+    let ideasArray = this.props.objectToArray(ideas),
+        trendingTags = {};
+
+    for (let idea of ideasArray) {
+      for (let tag of idea.tags) {
+        // let tagIndex = trendingTags.indexOf(tag.text);
+        // if (tagIndex < 0) {
+        //   trendingTags.push(tag.text);
+        //   trendingTags.push(1);
+        // } else
+        //   trendingTags[tagIndex + 1] += 1;
+
+        // if (!trendingTags[tag.text])
+        //   trendingTags[tag.text] = 1;
+        // else
+        //   trendingTags[tag.text] += 1;
+
+        if (trendingTags[tag.text])
+          trendingTags[tag.text] += 1;
+        else
+          trendingTags[tag.text] = 1;
+      }
+    }
+
+    trendingTags = Object.keys(trendingTags).sort(function(a,b){return trendingTags[b]-trendingTags[a] });
+    let counter = trendingTags.length;
 
     return (
-      <div className="row">
+      <div className="row home-container">
         <div className="col-sm-10">
           {ideasArray.map(idea => {
             return <IdeaItem idea={idea} addFilter={this.addFilter.bind(this)} />;
           })}
         </div>
-        <div className="col-sm-2">
-          {tags.map(tag => {
-            return <span data-toggle="tooltip" data-placement="bottom" title="Click to remove filter" onClick={ (e) => this.removeFilter(tag) } className="badge badge-dark tag-badge">{tag}</span>;
-          })}
+        <div className="col-sm-2 home-sidebar">
+          <div className="trending-tags">
+            <h5>Explore tags</h5>
+            {trendingTags.map(trendingTag => {
+              console.log(counter--);
+              return <span className="trending-tag" style={{fontSize: 20+counter--}} onClick={ (e) => this.addFilter(trendingTag) }>{trendingTag}</span>;
+            })}
+          </div>
+
+          <div className="filter-tags">
+            {tags.map(tag => {
+              return <span data-toggle="tooltip" data-placement="bottom" title="Click to remove filter" onClick={ (e) => this.removeFilter(tag) } className="badge badge-dark tag-badge">{tag}</span>;
+            })}
+          </div>
         </div>
       </div>
     );
